@@ -23,7 +23,7 @@ public class ChuckNorrisJokes {
         });
 
         System.out.println(deserializedResponse.get("value"));
-        System.out.println("Kobe added a code");
+
     }
 
 
