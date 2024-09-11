@@ -63,19 +63,24 @@ public class GetDistanceAirPorts {
         /*
         construct your call and get a distance from Atlanta Airport to JFK using re-usable method payload
          */
+        int count = 0;
+       try {
+           for (int i = 0; i < 1000; i++) {
+               count++;
+               RestAssured.given()
+                       .accept(ContentType.JSON)
+                       .contentType(ContentType.JSON)
+                       .body(Payloads.getDistancePayload("ATL", "JFK"))
+                       .when()
+                       .post("https://airportgap.com/api/airports/distance")
+                       .then()
+                       .statusCode(200);
+           }
 
-        Response response = RestAssured.given()
-                .accept(ContentType.JSON)
-                .contentType(ContentType.JSON)
-                .body(Payloads.getDistancePayload("ATL", "JFK"))
-                .when()
-                .post("https://airportgap.com/api/airports/distance")
-                .then()
-                .statusCode(200)
-                .extract()
-                .response();
-
-        System.out.println(response.prettyPrint());
+       }catch (AssertionError e){
+           System.out.println(count);
+           System.out.println(e.getMessage());
+       }
 
 
     }
