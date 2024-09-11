@@ -1,5 +1,6 @@
 package com.post;
 
+import com.payloads.Payloads;
 import com.pojos.airportPojo.AttributePojo;
 import com.pojos.airportPojo.DataPojo;
 import com.pojos.airportPojo.DistancePojo;
@@ -53,6 +54,30 @@ public class GetDistanceAirPorts {
 
         System.out.println(attributePojo.getTo_airport().getCity());
         System.out.println(attributePojo.getTo_airport().getName());
+    }
+
+
+    @Test
+    public void getDistanceWithPayload(){
+
+        /*
+        construct your call and get a distance from Atlanta Airport to JFK using re-usable method payload
+         */
+
+        Response response = RestAssured.given()
+                .accept(ContentType.JSON)
+                .contentType(ContentType.JSON)
+                .body(Payloads.getDistancePayload("ATL", "JFK"))
+                .when()
+                .post("https://airportgap.com/api/airports/distance")
+                .then()
+                .statusCode(200)
+                .extract()
+                .response();
+
+        System.out.println(response.prettyPrint());
+
+
     }
 
 
