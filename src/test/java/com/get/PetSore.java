@@ -4,15 +4,17 @@ import com.pojos.petPojo.PetPojo;
 import com.pojos.petPojo.Tags;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.testng.annotations.Test;
 
 import java.util.List;
+import java.util.Map;
 
 public class PetSore {
 
     @Test
-    public void getDog(){
+    public void getDog() {
 
         RestAssured.baseURI = "https://petstore.swagger.io";
         RestAssured.basePath = "v2/pet/2000";
@@ -38,11 +40,62 @@ public class PetSore {
         for (int i = 0; i < tags.size(); i++) {
 //            System.out.println(tags.get(i).getId());
 //            System.out.println(tags.get(i).getName());
-            if (tags.get(i).getName().equals("Sharik")){
+            if (tags.get(i).getName().equals("Sharik")) {
                 System.out.println(tags.get(i).getName());
                 System.out.println(tags.get(i).getId());
             }
         }
     }
+
+    @Test
+    public void getDogWithJsonPath() {
+
+
+        // JsonPath to deserialize our response
+        RestAssured.baseURI = "https://petstore.swagger.io";
+        RestAssured.basePath = "v2/pet/";
+
+        Response response = RestAssured.given()
+                .accept(ContentType.JSON)
+                .when()
+                .get("99")
+                .then()
+                .statusCode(200)
+                .extract()
+                .response();
+
+        JsonPath parsedResponse = response.jsonPath();
+
+        String dogName = parsedResponse.get("category.name");
+        System.out.println(dogName);
+
+        int dogId = parsedResponse.get("id");
+        System.out.println(dogId);
+
+        String dogFirstName = parsedResponse.get("name");
+        System.out.println(dogFirstName);
+
+        List<Object> photoURLs = parsedResponse.getList("photoUrls");
+        System.out.println(photoURLs);
+
+        List<Object> findRoxy = parsedResponse.get("tags.name");
+        System.out.println(findRoxy);
+
+
+
+
+        // Alternative way to locate Roxy which is located in Tags
+        List<Map<String, Object>> findRoxy2 = parsedResponse.getList("tags");
+        System.out.println(findRoxy2);
+
+        Map<String, Object> map = findRoxy2.get(0);
+        String name = (String) map.get("name");
+        System.out.println(name);
+
+        String status = parsedResponse.get("status");
+        System.out.println(status);
+
+    }
+
 
 }
